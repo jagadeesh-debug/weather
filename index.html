@@ -18,6 +18,18 @@
         <div class="information" id="information"></div>
     </div>
     <script>
+
+const rainDropCount = 50;
+
+for (let i = 0; i < rainDropCount; i++) {
+    const rainDrop = document.createElement('div');
+    rainDrop.className = 'raindrop';
+    rainDrop.style.setProperty('--x', Math.random());
+    rainDrop.style.setProperty('--duration', Math.random() * 2 + 1);
+    rainDrop.style.setProperty('--opacity', Math.random());
+    document.body.appendChild(rainDrop);
+}
+
         function getWeatherReport() {
             const apiKey = '25209f0126ec15026a0439cb66f02ef0';
             const city = document.getElementById('location').value;
