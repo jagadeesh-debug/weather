@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Weather</title>
+</head>
+
+<body>
+    <div class="main" id="container">
+        <input type="text" placeholder="Enter Your City" id="location" class="location">
+        <button class="btn" id="btn" onclick="getWeatherReport()">Fetch Weather</button>
+        <img id="weather-icon" alt="Weather Icon" style="display: none;">
+
+        <div class="temperature" id="temperature"></div>
+        <div class="information" id="information"></div>
+    </div>
+    <script>
+        function getWeatherReport() {
+            const apiKey = '25209f0126ec15026a0439cb66f02ef0';
+            const city = document.getElementById('location').value;
+
+            // Check if the user has provided a city name
+            if (!city) {
+                alert('Please enter a location.');
+                return;
+            }
+
+            const currentURL = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}`;
+            const forecastURL = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}`;
+
+            fetch(currentURL)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => { displayWeather(data); })
+                .catch(error => {
+                    console.error('Error fetching current weather data:', error);
+                    alert(`Error: ${error.message}. Please try again later.`);
+                });
+
+            function displayWeather(data) {
+                const tempDivInfo = document.getElementById('temperature');
+                const weatherInfoDiv = document.getElementById('information');
+                const weatherIcon = document.getElementById('weather-icon');
+
+                // Clear previous content
+                weatherInfoDiv.innerHTML = '';
+                tempDivInfo.innerHTML = '';
+
+                if (data.cod === '404') {
+                    weatherInfoDiv.innerHTML = `<p>${data.message}</p>`;
+                } else {
+                    const cityName = data.name;
+                    const temperature = Math.round(data.main.temp - 273.15); // Convert to Celsius
+                    const description = data.weather[0].description;
+                    const iconCode = data.weather[0].icon;
+                    const iconUrl = `https://openweathermap.org/img/wn/${iconCode}@4x.png`;
+
+                    const temperatureHTML = `
+                        <p>${temperature}°C</p>
+                    `;
+
+                    const weatherHtml = `
+                        <p>${cityName}</p>
+                        <p>${description}</p>
+                    `;
+
+                    tempDivInfo.innerHTML = temperatureHTML;
+                    weatherInfoDiv.innerHTML = weatherHtml;
+                    weatherIcon.src = iconUrl;
+                    weatherIcon.alt = description;
+
+                    showImage();
+                }
+            }
+
+            function showImage() {
+                const weatherIcon = document.getElementById('weather-icon');
+                weatherIcon.style.display = ''; // Make the image visible once it's loaded
+            }
+        }
+    </script>
+</body>
+
+</html>
+ 
